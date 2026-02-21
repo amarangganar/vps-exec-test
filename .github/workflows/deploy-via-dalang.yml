@@ -1,30 +1,41 @@
-name: Dalang Auth Test
+name: Dalang Auth & Exec Test
 
-on: workflow_dispatch  # Manual run only for now
+on:
+  workflow_dispatch:  # Allows manual triggering from the Actions tab
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repo (optional, but good practice)
+        uses: actions/checkout@v4
+
       - name: Install Dalang CLI
         run: |
-          curl -fsSL https://dalang.io/cli/install.sh | bash
-          dalang version || echo "Version check failed"
+          curl -fsSL https://dalang.io/install.sh | bash
+          # Add debug info
+          which dalang || echo "dalang binary not found in PATH"
+          dalang version || echo "dalang version command failed - install may have issues"
 
-      - name: Restore credentials
+      - name: Restore Dalang credentials from secret
         run: |
           mkdir -p ~/.dalang
           echo "${{ secrets.DALANG_CREDENTIALS }}" > ~/.dalang/credentials
           chmod 600 ~/.dalang/credentials
-          ls -l ~/.dalang/credentials  # just to confirm file exists
+          ls -l ~/.dalang/credentials  # Confirm file exists and has content
 
-      - name: Test authentication & VPS access
+      - name: Test Dalang authentication and VPS access
         run: |
-          echo "Listing services..."
-          dalang service list --json || echo "List failed - likely auth issue"
+          echo "=== Listing all services ==="
+          dalang service list --json || echo "→ service list failed (auth or CLI issue?)"
+
           echo ""
-          echo "Getting info for your VPS..."
-          dalang service info x6946305sa --json | jq . || echo "Info failed"
+          echo "=== Getting detailed info for your VPS ==="
+          dalang service info x6946305sa --json | jq . || echo "→ service info failed"
+
           echo ""
-          echo "Trying a simple exec..."
-          dalang exec x6946305sa "echo 'Hello from VPS at $(date)' && whoami" || echo "Exec failed"
+          echo "=== Simple exec test ==="
+          dalang exec x6946305sa "echo 'Hello from VPS! Time is $(date)' && whoami && pwd" || echo "→ exec failed"
+
+          echo ""
+          echo "=== All tests completed ==="
