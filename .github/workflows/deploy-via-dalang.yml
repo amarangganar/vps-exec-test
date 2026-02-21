@@ -20,7 +20,7 @@ jobs:
       - name: Restore Dalang credentials from secret
         run: |
           mkdir -p ~/.dalang
-          echo "${{ secrets.DALANG_CREDENTIALS }}" > ~/.dalang/credentials
+          echo '${{ secrets.DALANG_CREDENTIALS }}' > ~/.dalang/credentials
           chmod 600 ~/.dalang/credentials
           ls -l ~/.dalang/credentials  # Confirm file exists and has content
 
