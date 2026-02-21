@@ -33,6 +33,16 @@ jobs:
             echo "Credentials file is empty or missing!"
           fi
 
+      - name: Validate credentials JSON
+        run: |
+          if jq . ~/.dalang/credentials > /dev/null 2>&1; then
+            echo "Credentials file is valid JSON"
+            jq -r '.expires_at' ~/.dalang/credentials  # Safe: just prints expiration timestamp
+          else
+            echo "Credentials file is INVALID JSON - check quotes around keys!"
+            head -n 2 ~/.dalang/credentials  # Shows first 2 lines (may include partial token, but okay for debug)
+          fi
+
       - name: Test Dalang authentication and VPS access
         run: |
           echo "=== Listing all services ==="
