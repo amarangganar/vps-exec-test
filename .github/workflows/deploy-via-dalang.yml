@@ -24,6 +24,15 @@ jobs:
           chmod 600 ~/.dalang/credentials
           ls -l ~/.dalang/credentials  # Confirm file exists and has content
 
+      - name: Debug credentials (non-sensitive)
+        run: |
+          if [ -s ~/.dalang/credentials ]; then
+            echo "Credentials file exists and has content (size: $(stat -c %s ~/.dalang/credentials) bytes)"
+            head -c 20 ~/.dalang/credentials | xxd -p  # Hex dump of first 20 bytes (safe, no full token)
+          else
+            echo "Credentials file is empty or missing!"
+          fi
+
       - name: Test Dalang authentication and VPS access
         run: |
           echo "=== Listing all services ==="
