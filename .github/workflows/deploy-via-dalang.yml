@@ -50,11 +50,11 @@ jobs:
 
           echo ""
           echo "=== Getting detailed info for your VPS ==="
-          dalang service info x6946305sa --json | jq . || echo "→ service info failed"
+          dalang service info x6946305a --json | jq . || echo "→ service info failed"
 
           echo ""
           echo "=== Simple exec test ==="
-          dalang exec x6946305sa "echo 'Hello from VPS! Time is $(date)' && whoami && pwd" || echo "→ exec failed"
+          dalang exec x6946305a "echo 'Hello from VPS! Time is $(date)' && whoami && pwd" || echo "→ exec failed"
 
           echo ""
           echo "=== All tests completed ==="
